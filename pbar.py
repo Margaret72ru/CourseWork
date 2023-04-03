@@ -4,10 +4,10 @@ import time
 
 class ProgressBar(object):
     # region поля класса
-    default_progress_size: int = 49
+    _default_progress_size: int = 49
     current_progress: float
     total_progress: float
-    bar_size: int = default_progress_size
+    bar_size: int = _default_progress_size
     caption: str
 
     textCritical: str = 'Превышение времени выполнения!'
@@ -17,11 +17,11 @@ class ProgressBar(object):
 
     # endregion
 
-    def setup(self, caption: str, total_progress: int = 0, current: int = 0, bar_size: int = default_progress_size):
+    def setup(self, caption: str, total_progress: int = 0, current: int = 0, bar_size: int = _default_progress_size):
         self.current_progress = current
         self.total_progress = total_progress
         self.caption = caption
-        if bar_size != self.default_progress_size:
+        if bar_size != self._default_progress_size:
             self.bar_size = bar_size
 
     def next(self, current: int = 0, caption: str = ''):

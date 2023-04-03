@@ -1,24 +1,24 @@
 import os
 import time
-from ProgressBar import ProgressBar
+from pbar import ProgressBar
 import requests
 
 
 class VK:
     def __init__(self, token, uid, progress: ProgressBar, version='5.131'):
-        self.progress = progress
-        self.token = token
-        self.id = uid
-        self.version = version
-        self.params = {'access_token': self.token, 'v': self.version}
+        self._progress = progress
+        self._token = token
+        self._id = uid
+        self._version = version
+        self._params = {'access_token': self._token, 'v': self._version}
 
     def get_photos_data(self, offset=0, count=250):
         url = 'https://api.vk.com/method/photos.get'
         params = {
-            'owner_id': self.id,
+            'owner_id': self._id,
             'album_id': 'profile',  # получение фотографий профиля
             'extended': '1',  # доп.параметры (лайки)
-            'access_token': self.token,
+            'access_token': self._token,
             'v': '5.131',
             'count': count,
             'offset': offset
@@ -30,7 +30,7 @@ class VK:
         part_size = 250
         current_part = self.get_photos_data(count=part_size)
         all_photos_count = current_part['response']['count']
-        self.progress.setup("Запрос фотографий VK профиля...", all_photos_count)
+        self._progress.setup("Запрос фотографий VK профиля...", all_photos_count)
         index = 0
         result = {}
         while all_photos_count > index:
@@ -45,7 +45,7 @@ class VK:
                     file_name_full = file_name + '-' + str(files['date']) + f_ext
                 result[file_name_full] = (f_type, f['url'])
                 time.sleep(0.3)  # имитация долгой работы )))))
-                self.progress.next()
+                self._progress.next()
                 print(flush=True)  # чтобы прогресс выводился
             if all_photos_count > index:
                 current_part = self.get_photos_data(offset=index, count=part_size)

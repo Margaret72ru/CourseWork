@@ -1,7 +1,7 @@
 import time
-from ProgressBar import ProgressBar
-from VK import VK
-from YaDisk import YaUploader
+from pbar import ProgressBar
+from vk import VK
+from yadisk import YaUploader
 
 
 def get_vk_token():
@@ -42,9 +42,17 @@ if __name__ == '__main__':
         print(res.text)
         exit(-1)
     progress.setup("Загрузка фотографий на Яндекс диск...", len(vkPhotos))
-    for item in vkPhotos:
-        res = yaDisk.upload(yaDir + "/" + item, vkPhotos[item][1])
-        progress.next()
-        time.sleep(0.1)
-        print(flush=True)
+    with open("result.txt", "w") as f:
+        f.write('{\n')
+        try:
+            js_lines = []
+            for item in vkPhotos:
+                res = yaDisk.upload(yaDir + "/" + item, vkPhotos[item][1])
+                progress.next()
+                time.sleep(0.1)
+                print(flush=True)
+                js_lines.append(f'"{item}": "{vkPhotos[item][1]}"')
+        finally:
+            f.write(',\n'.join(js_lines))
+            f.write('\n}')
     print("Загрузка фотографий успешно завершена!")
